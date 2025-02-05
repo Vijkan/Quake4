@@ -446,7 +446,9 @@ stateResult_t rvWeaponRocketLauncher::State_Fire ( const stateParms_t& parms ) {
 	switch ( parms.stage ) {
 		case STAGE_INIT:
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));		
-			Attack ( false, 1, spread, 0, 1.0f );
+			for (int i = -1; i <= 1; i++) {//whenever you fire it runs this loops firing 3 rockets (i also changed the amount of rockets in a clip to 3 in the def file to prevent any issues)
+				Attack(false, 1, 150, 0, 1.0f);
+											}
 			PlayAnim ( ANIMCHANNEL_LEGS, "fire", parms.blendFrames );	
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
