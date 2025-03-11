@@ -1419,11 +1419,14 @@ void idClass::RegisterClasses( void )
 	REGISTER(rvWeaponHyperblaster); // ..\..\code\game\weapon\WeaponHyperblaster.cpp
 	REGISTER(rvWeaponLightningGun); // ..\..\code\game\weapon\WeaponLightningGun.cpp
 	REGISTER(rvWeaponMachinegun); // ..\..\code\game\weapon\WeaponMachinegun.cpp
-	REGISTER(rvWeaponNailgun); // ..\..\code\game\weapon\WeaponNailgun.cpp
-	REGISTER(rvWeaponMinigun); // ..\..\code\game\weapon\WeaponMinigun.cpp          
+	REGISTER(rvWeaponNailgun); // ..\..\code\game\weapon\WeaponNailgun.cpp          
 	REGISTER(rvWeaponRailgun); // ..\..\code\game\weapon\WeaponRailgun.cpp
 	REGISTER(rvWeaponRocketLauncher); // ..\..\code\game\weapon\WeaponRocketLauncher.cpp
 	REGISTER(rvWeaponShotgun); // ..\..\code\game\weapon\WeaponShotgun.cpp
+	//Add custom weapons
+	REGISTER(rvWeaponMinigun);
+	REGISTER(rvWeaponRifle);
+	REGISTER(rvWeaponTaser);
 // RITUAL BEGIN
 	REGISTER(riDeadZonePowerup); // ..\..\code\game\Item.cpp
 	REGISTER(WeaponNapalmGun);	// ..\..\code\game\weapon\WeaponNapalmGun.cpp
