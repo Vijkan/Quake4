@@ -1426,7 +1426,10 @@ void idClass::RegisterClasses( void )
 	//Add custom weapons
 	REGISTER(rvWeaponMinigun);
 	REGISTER(rvWeaponRifle);
+	REGISTER(rvWeaponSniper);
 	REGISTER(rvWeaponTaser);
+	REGISTER(rvWeaponFlamethrower);
+	REGISTER(rvWeaponHeartAttackGun);
 // RITUAL BEGIN
 	REGISTER(riDeadZonePowerup); // ..\..\code\game\Item.cpp
 	REGISTER(WeaponNapalmGun);	// ..\..\code\game\weapon\WeaponNapalmGun.cpp
