@@ -1375,10 +1375,12 @@ bool idLight::IsInShadows() {
 	if (currentLevel == 0)
 	{
 		Hide();
+		gameLocal.Printf("hidden");
 		return (true);
 	}
-	else if (currentLevel >= 0 && currentLevel <= 1) {
+	else if (currentLevel >= 0 && currentLevel <= 300) {
 		Hide();
+		gameLocal.Printf("lightcurrlvl: %d",currentLevel);
 		return (true);
 	}
 	else {

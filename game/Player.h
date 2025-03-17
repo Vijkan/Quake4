@@ -35,7 +35,7 @@ const int	FOCUS_TIME					= 200;
 const int	FOCUS_GUI_TIME				= 300;
 const int	FOCUS_USABLE_TIME			= 100;
 
-const int	MAX_WEAPONS					= 16;
+const int	MAX_WEAPONS					= 20;
 const int	MAX_AMMO					= 16;
 const int	CARRYOVER_FLAG_AMMO			= 0x40000000;
 const int	CARRYOVER_FLAG_ARMOR_LIGHT	= 0x20000000;

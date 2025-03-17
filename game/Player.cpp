@@ -7609,7 +7609,35 @@ void idPlayer::BobCycle(const idVec3& pushVelocity) {
 	if (noclip) {
 		velocity.Zero();
 	}
-
+	//basically while not no clip time gets updated 
+	//if (true) {// i know this is bad but its needed to stop some of the many problems
+		int currentTimeHide = gameLocal.time;
+		if (p >= 1) { //P has a bad habit of somehow becoming 0 so I did this 
+			
+				if (physicsObj.IsCrouching() && pfl.weaponFired == false && DelayTimeHide == 0) {
+					Hide(); //tried here (it worked) 
+				}
+				if (pfl.weaponFired == true) {
+					Show();
+					if (p <= 2.5) {
+						DelayTimeHide = currentTimeHide + (10000 * p);
+						p += 0.25;
+					}
+				}
+				if (currentTimeHide < DelayTimeHide || (pfl.weaponFired == false && DelayTimeHide != 0)) { //just being safe here because sometimes im getting problems 
+					currentTimeHide = gameLocal.time;
+					Show();
+				}
+				if (currentTimeHide > DelayTimeHide && DelayTimeHide > 0) {// getting problems here 
+					DelayTimeHide = 0;
+					p = p - 1.5;
+				}
+		}
+		else if (p < 1) {
+			p = 1;
+		}
+		gameLocal.Printf("Time: %d | Delay: %d | P: %d\n", currentTimeHide, DelayTimeHide, p);
+	//}
 	gravityDir = physicsObj.GetGravityNormal();
 	vel = velocity - (velocity * gravityDir) * gravityDir;
 	xyspeed = vel.LengthFast();
@@ -7627,32 +7655,8 @@ void idPlayer::BobCycle(const idVec3& pushVelocity) {
 		bobfracsin = 0;
 	}
 	else {
-
-
-
 		if (physicsObj.IsCrouching()) {
-			int currentTimeHide = gameLocal.time;
 			bobmove = pm_crouchbob.GetFloat();
-			// ducked characters never play footsteps
-			if (pfl.weaponFired == false && DelayTimeHide == 0) {
-				Hide(); //tried here (it worked) 
-			}
-			else if (pfl.weaponFired == true) {
-				Show();
-				if (p <= 2.5) {
-					DelayTimeHide = currentTimeHide + (10000 * p);
-					p += 0.25;
-				}
-			}
-			if (currentTimeHide < DelayTimeHide) {
-				currentTimeHide = gameLocal.time;
-				Show();
-			}
-			else if (currentTimeHide >= DelayTimeHide && DelayTimeHide != 0) {
-				DelayTimeHide = 0;
-				p = p - 1.5;
-			}
-			// gameLocal.Printf("Time: %d | Delay: %d | P: %d\n", currentTimeHide, DelayTimeHide, p); //for debug
 		}
 
 		else {
