@@ -1366,6 +1366,28 @@ void idLight::Event_Break(idEntity *activator, float turnOff)
 	}
 }
 
+
+
+//checks if player in shadow and returns bool 
+//IDEK i want to get shadow into player.cpp but its already virtual I hope this doesnt break anything
+bool idLight::IsInShadows() {
+
+	if (currentLevel == 0)
+	{
+		Hide();
+		return (true);
+	}
+	else if (currentLevel >= 0 && currentLevel <= 1) {
+		Hide();
+		return (true);
+	}
+	else {
+		Show();
+		return (false);
+	}
+}
+
+
 void idLight::Event_DoneBlinking()
 {
 	// switch to a new (possibly non-blinking) shader for the light as well as a new looping sound

@@ -21,6 +21,7 @@ public:
 					~idLight();
 
 	void			Spawn( void );
+	virtual bool    IsInShadows(void); //in light.cpp
 
 	void			Save( idSaveGame *savefile ) const;					// archives object for save game file
 	void			Restore( idRestoreGame *savefile );					// unarchives object from save game file

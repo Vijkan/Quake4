@@ -7589,7 +7589,7 @@ void idPlayer::CrashLand( const idVec3 &oldOrigin, const idVec3 &oldVelocity ) {
 idPlayer::BobCycle
 ===============
 */
-void idPlayer::BobCycle( const idVec3 &pushVelocity ) {
+void idPlayer::BobCycle(const idVec3& pushVelocity) {
 	float		bobmove;
 	int			old, deltaTime;
 	idVec3		vel, gravityDir, velocity;
@@ -7598,56 +7598,83 @@ void idPlayer::BobCycle( const idVec3 &pushVelocity ) {
 	float		delta;
 	float		speed;
 	float		f;
-
-
+	static int DelayTimeHide = 0; // up here so it doesnt reset everytime the if statement is called 
+	static int p = 1; // to make it so for every shot fired you need to wait longer to crouch
 	//
 	// calculate speed and cycle to be used for
 	// all cyclic walking effects
 	//
 	velocity = physicsObj.GetLinearVelocity() - pushVelocity;
 
-	if ( noclip ) {
-		velocity.Zero ( );
+	if (noclip) {
+		velocity.Zero();
 	}
-   
+
 	gravityDir = physicsObj.GetGravityNormal();
-	vel = velocity - ( velocity * gravityDir ) * gravityDir;
+	vel = velocity - (velocity * gravityDir) * gravityDir;
 	xyspeed = vel.LengthFast();
-	
-	if ( !physicsObj.HasGroundContacts() || influenceActive == INFLUENCE_LEVEL2 || ( gameLocal.isMultiplayer && spectating ) ) {
+
+	if (!physicsObj.HasGroundContacts() || influenceActive == INFLUENCE_LEVEL2 || (gameLocal.isMultiplayer && spectating)) {
 		// airborne
 		bobCycle = 0;
 		bobFoot = 0;
 		bobfracsin = 0;
- 	} else if ( ( !usercmd.forwardmove && !usercmd.rightmove ) || ( xyspeed <= MIN_BOB_SPEED ) ) {
- 		// start at beginning of cycle again
- 		bobCycle = 0;
- 		bobFoot = 0;
- 		bobfracsin = 0;
-	} else {
-		if ( physicsObj.IsCrouching() ) {
+	}
+	else if ((!usercmd.forwardmove && !usercmd.rightmove) || (xyspeed <= MIN_BOB_SPEED)) {
+		// start at beginning of cycle again
+		bobCycle = 0;
+		bobFoot = 0;
+		bobfracsin = 0;
+	}
+	else {
+
+
+
+		if (physicsObj.IsCrouching()) {
+			int currentTimeHide = gameLocal.time;
 			bobmove = pm_crouchbob.GetFloat();
 			// ducked characters never play footsteps
-		} else {
+			if (pfl.weaponFired == false && DelayTimeHide == 0) {
+				Hide(); //tried here (it worked) 
+			}
+			else if (pfl.weaponFired == true) {
+				Show();
+				if (p <= 2.5) {
+					DelayTimeHide = currentTimeHide + (10000 * p);
+					p += 0.25;
+				}
+			}
+			if (currentTimeHide < DelayTimeHide) {
+				currentTimeHide = gameLocal.time;
+				Show();
+			}
+			else if (currentTimeHide >= DelayTimeHide && DelayTimeHide != 0) {
+				DelayTimeHide = 0;
+				p = p - 1.5;
+			}
+			// gameLocal.Printf("Time: %d | Delay: %d | P: %d\n", currentTimeHide, DelayTimeHide, p); //for debug
+		}
+
+		else {
 			// vary the bobbing based on the speed of the player
-			bobmove = pm_walkbob.GetFloat() * ( 1.0f - bobFrac ) + pm_runbob.GetFloat() * bobFrac;
+			bobmove = pm_walkbob.GetFloat() * (1.0f - bobFrac) + pm_runbob.GetFloat() * bobFrac;
 		}
 
 		// check for footstep / splash sounds
 		old = bobCycle;
-		bobCycle = (int)( old + bobmove * gameLocal.GetMSec() ) & 255;
-		bobFoot = ( bobCycle & 128 ) >> 7;
-		bobfracsin = idMath::Fabs( idMath::Sin( ( bobCycle & 127 ) / 127.0 * idMath::PI ) );
+		bobCycle = (int)(old + bobmove * gameLocal.GetMSec()) & 255;
+		bobFoot = (bobCycle & 128) >> 7;
+		bobfracsin = idMath::Fabs(idMath::Sin((bobCycle & 127) / 127.0 * idMath::PI));
 	}
 
 	// calculate angles for view bobbing
 	viewBobAngles.Zero();
 
 	// no view bob at all in MP while zoomed in
-	if( gameLocal.isMultiplayer && IsZoomed() ) {
+	if (gameLocal.isMultiplayer && IsZoomed()) {
 		bobCycle = 0;
 		bobFoot = 0;
-		bobfracsin = 0;	
+		bobfracsin = 0;
 		return;
 	}
 
@@ -7656,7 +7683,7 @@ void idPlayer::BobCycle( const idVec3 &pushVelocity ) {
 	// add angles based on velocity
 	delta = velocity * viewaxis[0];
 	viewBobAngles.pitch += delta * pm_runpitch.GetFloat();
-	
+
 	delta = velocity * viewaxis[1];
 	viewBobAngles.roll -= delta * pm_runroll.GetFloat();
 
@@ -7665,15 +7692,15 @@ void idPlayer::BobCycle( const idVec3 &pushVelocity ) {
 	speed = xyspeed > 200 ? xyspeed : 200;
 
 	delta = bobfracsin * pm_bobpitch.GetFloat() * speed;
-	if ( physicsObj.IsCrouching() ) {
+	if (physicsObj.IsCrouching()) {
 		delta *= 3;		// crouching
 	}
 	viewBobAngles.pitch += delta;
 	delta = bobfracsin * pm_bobroll.GetFloat() * speed;
-	if ( physicsObj.IsCrouching() ) {
+	if (physicsObj.IsCrouching()) {
 		delta *= 3;		// crouching accentuates roll
 	}
-	if ( bobFoot & 1 ) {
+	if (bobFoot & 1) {
 		delta = -delta;
 	}
 	viewBobAngles.roll += delta;
@@ -7681,16 +7708,17 @@ void idPlayer::BobCycle( const idVec3 &pushVelocity ) {
 	// calculate position for view bobbing
 	viewBob.Zero();
 
-	if ( physicsObj.HasSteppedUp() ) {
+	if (physicsObj.HasSteppedUp()) {
 
 		// check for stepping up before a previous step is completed
 		deltaTime = gameLocal.time - stepUpTime;
-		if ( deltaTime < STEPUP_TIME ) {
-			stepUpDelta = stepUpDelta * ( STEPUP_TIME - deltaTime ) / STEPUP_TIME + physicsObj.GetStepUp();
-		} else {
+		if (deltaTime < STEPUP_TIME) {
+			stepUpDelta = stepUpDelta * (STEPUP_TIME - deltaTime) / STEPUP_TIME + physicsObj.GetStepUp();
+		}
+		else {
 			stepUpDelta = physicsObj.GetStepUp();
 		}
-		if ( stepUpDelta > 2.0f * pm_stepsize.GetFloat() ) {
+		if (stepUpDelta > 2.0f * pm_stepsize.GetFloat()) {
 			stepUpDelta = 2.0f * pm_stepsize.GetFloat();
 		}
 		stepUpTime = gameLocal.time;
@@ -7700,31 +7728,34 @@ void idPlayer::BobCycle( const idVec3 &pushVelocity ) {
 
 	// if the player stepped up recently
 	deltaTime = gameLocal.time - stepUpTime;
-	if ( deltaTime < STEPUP_TIME ) {
-		viewBob += gravity * ( stepUpDelta * ( STEPUP_TIME - deltaTime ) / STEPUP_TIME );
+	if (deltaTime < STEPUP_TIME) {
+		viewBob += gravity * (stepUpDelta * (STEPUP_TIME - deltaTime) / STEPUP_TIME);
 	}
 
 	// add bob height after any movement smoothing
 	bob = bobfracsin * xyspeed * pm_bobup.GetFloat();
-	if ( bob > 6 ) {
+	if (bob > 6) {
 		bob = 6;
 	}
-// RAVEN BEGIN
-// abahr: added gravity
+	// RAVEN BEGIN
+	// abahr: added gravity
 	viewBob += bob * -gravityDir;
-// RAVEN END
+	// RAVEN END
 
-	// add fall height
+		// add fall height
 	delta = gameLocal.time - landTime;
-	if ( delta < LAND_DEFLECT_TIME ) {
+	if (delta < LAND_DEFLECT_TIME) {
 		f = delta / LAND_DEFLECT_TIME;
-		viewBob -= gravity * ( landChange * f );
-	} else if ( delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME ) {
+		viewBob -= gravity * (landChange * f);
+	}
+	else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME) {
 		delta -= LAND_DEFLECT_TIME;
-		f = 1.0 - ( delta / LAND_RETURN_TIME );
-		viewBob -= gravity * ( landChange * f );
-	}	
+		f = 1.0 - (delta / LAND_RETURN_TIME);
+		viewBob -= gravity * (landChange * f);
+	}
 }
+
+
 
 /*
 ================
