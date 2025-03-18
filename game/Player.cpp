@@ -7599,44 +7599,48 @@ void idPlayer::BobCycle(const idVec3& pushVelocity) {
 	float		speed;
 	float		f;
 	static int DelayTimeHide = 0; // up here so it doesnt reset everytime the if statement is called 
-	static int p = 1; // to make it so for every shot fired you need to wait longer to crouch
+	static int mulp = 1; // to make it so for every shot fired you need to wait longer to crouch
+
+
 	//
 	// calculate speed and cycle to be used for
 	// all cyclic walking effects
 	//
 	velocity = physicsObj.GetLinearVelocity() - pushVelocity;
-
+	if (!physicsObj.IsCrouching()) {
+		Show();
+	}
 	if (noclip) {
 		velocity.Zero();
 	}
 	//basically while not no clip time gets updated 
 	//if (true) {// i know this is bad but its needed to stop some of the many problems
-		int currentTimeHide = gameLocal.time;
-		if (p >= 1) { //P has a bad habit of somehow becoming 0 so I did this 
-			
-				if (physicsObj.IsCrouching() && pfl.weaponFired == false && DelayTimeHide == 0) {
-					Hide(); //tried here (it worked) 
-				}
-				if (pfl.weaponFired == true) {
-					Show();
-					if (p <= 2.5) {
-						DelayTimeHide = currentTimeHide + (10000 * p);
-						p += 0.25;
-					}
-				}
-				if (currentTimeHide < DelayTimeHide || (pfl.weaponFired == false && DelayTimeHide != 0)) { //just being safe here because sometimes im getting problems 
-					currentTimeHide = gameLocal.time;
-					Show();
-				}
-				if (currentTimeHide > DelayTimeHide && DelayTimeHide > 0) {// getting problems here 
-					DelayTimeHide = 0;
-					p = p - 1.5;
-				}
+	int currentTimeHide = gameLocal.time;
+	if (mulp >= 1) { //mulp has a bad habit of somehow becoming 0 so I did this 
+
+		if (physicsObj.IsCrouching() && pfl.weaponFired == false && DelayTimeHide == 0) {
+			Hide(); //tried here (it worked) 
 		}
-		else if (p < 1) {
-			p = 1;
+		if (pfl.weaponFired == true) {
+			Show();
+			if (mulp <= 2.5) {
+				DelayTimeHide = currentTimeHide + (10000 * mulp);
+				mulp += 0.25;
+			}
 		}
-		gameLocal.Printf("Time: %d | Delay: %d | P: %d\n", currentTimeHide, DelayTimeHide, p);
+		if (currentTimeHide < DelayTimeHide || (pfl.weaponFired == false && DelayTimeHide != 0)) { //just being safe here because sometimes im getting problems 
+			currentTimeHide = gameLocal.time;
+			Show();
+		}
+		if (currentTimeHide > DelayTimeHide && DelayTimeHide > 0) {// getting problems here 
+			DelayTimeHide = 0;
+			mulp = mulp - 1.5;
+		}
+	}
+	else if (mulp < 1) {
+		mulp = 1;
+	}
+	gameLocal.Printf("Time: %d | Delay: %d | P: %d\n", currentTimeHide, DelayTimeHide, mulp);
 	//}
 	gravityDir = physicsObj.GetGravityNormal();
 	vel = velocity - (velocity * gravityDir) * gravityDir;

@@ -1430,6 +1430,7 @@ void idClass::RegisterClasses( void )
 	REGISTER(rvWeaponTaser);
 	REGISTER(rvWeaponFlamethrower);
 	REGISTER(rvWeaponHeartAttackGun);
+	REGISTER(rvWeaponHeavySniper);
 // RITUAL BEGIN
 	REGISTER(riDeadZonePowerup); // ..\..\code\game\Item.cpp
 	REGISTER(WeaponNapalmGun);	// ..\..\code\game\weapon\WeaponNapalmGun.cpp
