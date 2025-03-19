@@ -1,6 +1,19 @@
 To play my game you need to give yourlself all the weapons you want 
 To stealth you can crouch or stay in shadows
 
+derivilables
+
+A README with instructions on how to play your game and see all of your new feature
+A shortcut that automatically Launches your Mod
+All custom assets (def files, models, sounds, etc) placed in a pak001.pak file
+An In-Game Help Screen to explain your mod
+Custom User Interface(HUD or other in-game menus) for your game's features
+1. Change the weapons (10) out of quake make them hitman weapons 
+2. 5 new AI behaviors to stealth the player stealth mechanics
+3. 5 player stealth mechanics
+4. 3 different objectives (killing target 
+UpdateObjectiveInfo
+5. trip wires and laser alerts 5 level security obstacles 
 
 Weapon changes:
 
